@@ -52,7 +52,7 @@ export const registerUser = async (c: any) => {
 export const loginUser = async (c: any) => {
   const { username, password } = await c.req.json();
   const user = users.find((user) => user.username === username);
-  if (!user || !(await Bun.password.verify(password, user.password))) {
+  if (!user || (password !== user.password)) {
     return c.html(<h2>User not found or wrong password</h2>);
   }
   const token = await sign(
