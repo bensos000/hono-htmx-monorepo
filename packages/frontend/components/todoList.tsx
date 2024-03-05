@@ -6,7 +6,7 @@ export default function TodoList() {
         <div className="flow-root">
           <ul
             hx-get={`${process.env.BaseUrl}/api/auth/todos`}
-            hx-trigger="load delay:300ms, todo-delete from:body"
+            hx-trigger="load delay:100ms, todo-delete from:body"
             hx-target="#todo-list"
             id="todo-list"
             role="list"
