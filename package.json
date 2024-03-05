@@ -1,0 +1,15 @@
+{
+  "name": "honohtmxmonorepo",
+  "scripts": {
+    "start:frontend": "cd packages/frontend && bun install && bun run start",
+    "start:backend": "cd packages/backend && bun install && bun run start:api",
+    "start:doc": "cd packages/backend && bun install && bun run start:doc",
+    "boot:app": "bun run concurrently \"bun:start:*\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}

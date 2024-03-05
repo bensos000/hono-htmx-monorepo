@@ -1,0 +1,21 @@
+{
+  "name": "frontend",
+  "module": "index.tsx",
+  "type": "module",
+  "scripts": {
+    "start": "bun run --hot index.tsx"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/react": "^18.2.61",
+    "@types/react-dom": "^18.2.19"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "shared": "workspace:*"
+  }
+}

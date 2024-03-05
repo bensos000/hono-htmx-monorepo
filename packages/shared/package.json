@@ -1,0 +1,13 @@
+{
+  "name": "shared",
+  "module": "index.tsx",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/react": "^18.2.61",
+    "@types/react-dom": "^18.2.19"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

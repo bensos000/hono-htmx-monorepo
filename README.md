@@ -1,2 +1,8 @@
-# hono-htmx-monorepo
-Hono in the backend and Htmx in the frontend with React SSR JSX component rendering in Bun
+# honohtmxmonorepo
+
+to run this project install bun and type:
+
+```
+bun install
+bun run boot:app
+```
