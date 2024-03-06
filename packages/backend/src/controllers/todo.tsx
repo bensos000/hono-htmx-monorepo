@@ -52,8 +52,7 @@ export const updateTodo = async (c: any) => {
     }
     if (Boolean(editable)) todo.editable = Boolean(editable);
     if (Boolean(completed)) todo.completed = Boolean(completed);
-    todos = todos.filter((todo) => todo.id !== id);
-    todos.push(todo);
+    todos[Number(todo.id)-1] = todo;
   }
   return c.html(
     <>
