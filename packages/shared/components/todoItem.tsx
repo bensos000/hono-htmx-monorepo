@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { ITodo } from "../schema/todos";
+import type { ITodo } from "../schema";
 
 export default function TodoItem({
   id,

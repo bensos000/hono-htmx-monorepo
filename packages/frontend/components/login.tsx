@@ -6,7 +6,6 @@ export default function Login() {
         <div className="flow-root">
           <form 
           hx-post={`${process.env.BaseUrl}/api/login`}
-          //hx-swap="none"
           hx-target="#login-response"
           hx-ext="json-enc"
           >
