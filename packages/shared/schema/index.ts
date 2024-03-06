@@ -3,6 +3,7 @@ export interface ITodo {
   content?: string;
   timestamp?: string;
   completed?: boolean;
+  editable?: boolean;
 }
 
 export interface IUsers {

@@ -35,6 +35,7 @@ describe("todo test", () => {
     const req = new Request(`http://localhost/api/auth/todo/${id}`, {
       method: "PUT",
       headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ content: "test", editable: false, completed: false }),
     });
     const res = await app.fetch(req);
     expect(res.status).toBe(200);

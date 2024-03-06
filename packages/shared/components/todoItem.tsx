@@ -6,6 +6,7 @@ export default function TodoItem({
   content,
   timestamp,
   completed,
+  editable,
 }: ITodo): ReactNode {
   return (
     <div id={`todo-completed-${id}`}>
@@ -19,20 +20,45 @@ export default function TodoItem({
             >
               <input
                 type="checkbox"
+                name="completed"
                 checked={completed}
                 hx-put={`${process.env.BaseUrl}/api/auth/todo/${id}`}
                 hx-target={`#todo-completed-${id}`}
                 hx-ext="json-enc"
-                hx-swap="out"
+                hx-swap="outerHTML"
                 hx-trigger="click"
               />{" "}
-              {content}
+              {editable && (
+                <input
+                  name="content"
+                  type="text"
+                  value={`${content}`}
+                  hx-put={`${process.env.BaseUrl}/api/auth/todo/${id}`}
+                  hx-target={`#todo-completed-${id}`}
+                  hx-ext="json-enc"
+                  hx-swap="outerHTML"
+                  hx-trigger="keyup[keyCode==13]"
+                />
+              )}
+              {!editable && content}
             </p>
             <p className="text-sm text-gray-500 truncate dark:text-gray-400">
               {timestamp}
             </p>
           </div>
-          <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+          <div className="flex items-center text-base font-semibold text-gray-900 dark:text-white">
+            <button
+              name="editable"
+              value={editable ? "false" : "true"}
+              hx-put={`${process.env.BaseUrl}/api/auth/todo/${id}`}
+              hx-swap="outerHTML"
+              hx-target={`#todo-completed-${id}`}
+              hx-ext="json-enc"
+              hx-trigger="click"
+              className="mr-2 text-sm font-medium text-blue-600 hover:underline dark:text-blue-50"
+            >
+              edit
+            </button>{" "}
             <button
               name="todoId"
               value={id}
@@ -41,8 +67,9 @@ export default function TodoItem({
               hx-target={`#todo-${id}`}
               hx-ext="json-enc"
               hx-trigger="click"
+              className="mr-2 text-sm font-medium text-blue-600 hover:underline dark:text-blue-50"
             >
-              x
+              delete
             </button>
           </div>
         </div>

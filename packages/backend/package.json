@@ -3,7 +3,7 @@
   "scripts": {
     "start:api": "bun run --hot src/index.tsx",
     "start:doc": "bun run --hot src/openapi/index.tsx",
-    "start:test": "bun test test/*.tsx"
+    "start:test": "bun test test/*.ts"
   },
   "dependencies": {
     "hono": "^4.0.8",

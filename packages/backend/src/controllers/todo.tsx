@@ -30,6 +30,7 @@ export const addTodo = async (c: any) => {
     content,
     timestamp: "12345566",
     completed: false,
+    editable: false,
   };
   todos.push(todo);
   return c.html(
@@ -42,13 +43,18 @@ export const addTodo = async (c: any) => {
 export const updateTodo = async (c: any) => {
   if (!banIfNotAuthorized(c)) return c.json({ error: "Unauthorized" }, 401);
   const id = c.req.param("id");
+  const { content, editable, completed } = await c.req.json();
   let todo: ITodo | undefined = todos.find((todo) => todo.id === id);
-  todo = {
-    ...todo,
-    completed: !todo?.completed,
-  };
-  todos = todos.filter((todo) => todo.id !== id);
-  todos.push(todo);
+  if (todo) {
+    if (content) {
+      todo.content = content;
+      todo.editable = false;
+    }
+    if (Boolean(editable)) todo.editable = Boolean(editable);
+    if (Boolean(completed)) todo.completed = Boolean(completed);
+    todos = todos.filter((todo) => todo.id !== id);
+    todos.push(todo);
+  }
   return c.html(
     <>
       <TodoItem {...todo}></TodoItem>
