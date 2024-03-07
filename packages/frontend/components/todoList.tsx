@@ -6,11 +6,12 @@ export default function TodoList() {
         <div className="flow-root">
           <ul
             hx-get={`${process.env.BaseUrl}/api/auth/todos`}
-            hx-trigger="load delay:50ms, todo-delete from:body"
+            hx-trigger="load, todo-delete from:body"
             hx-target="#todo-list"
             id="todo-list"
             role="list"
             className="divide-y divide-gray-200 dark:divide-gray-700"
+            hx-sync="closest body:loadend"
           >
             <div className="flex items-center justify-center">
               <img
