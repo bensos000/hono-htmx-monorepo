@@ -77,6 +77,36 @@ export const deleteTodo = async (c: any) => {
   });
 };
 
+export const getUserMenu = async (c: any) => {
+  const authorization = c.req.header()["authorization"];
+  let username = "";
+  if (authorization) {
+    try {
+      const decodedPayload = await verify(
+        authorization.replace("Bearer ", ""),
+        process.env.TokenSecret as string
+      );
+      username = decodedPayload.username;
+    } catch {
+      return c.json({ error: "Invalid token" });
+    }
+  }
+  return c.html(
+    <>
+      <h2 className="text-white">Welcome {username}</h2>
+      <button
+        hx-post={`${process.env.BaseUrl}/api/logout`}
+        hx-trigger="click"
+        hx-swap="innerHtml"
+        hx-target="#logout"
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-10"
+      >
+        Logout
+      </button>
+    </>
+  );
+};
+
 todosRoute.get("/todos", getTodos);
 
 todosRoute.post("/todo", addTodo);
@@ -84,5 +114,7 @@ todosRoute.post("/todo", addTodo);
 todosRoute.put("/todo/:id", updateTodo);
 
 todosRoute.delete("/todo", deleteTodo);
+
+todosRoute.get("/user", getUserMenu);
 
 export default todosRoute;

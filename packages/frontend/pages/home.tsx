@@ -6,15 +6,13 @@ export default function Home() {
   return (
     <Layout>
       <div className="mt-8 max-w-sm mx-auto">
-        <button
-          hx-post={`${process.env.BaseUrl}/api/logout`}
-          hx-trigger="click"
-          hx-swap="innerHtml"
-          hx-target="#logout"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-10"
-        >
-          Logout
-        </button>
+        <div
+          hx-get={`${process.env.BaseUrl}/api/auth/user`}
+          hx-trigger="load"
+          hx-target="this"
+          className="flex items-baseline justify-between"
+          hx-sync="closest #token-api:loadend"
+        ></div>
         <NewTodo />
         <TodoList />
         <script id="logout"></script>

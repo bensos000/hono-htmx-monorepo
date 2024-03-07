@@ -10,6 +10,7 @@ export default function Layout({ children }: { children: JSX.Element }) {
         className="bg-gray-800" 
         hx-get={`${process.env.BaseUrl}/api/token`}
         hx-trigger="load"
+        id="token-api"
         hx-target="#token"
         hx-swap="innerHtml"
       >
