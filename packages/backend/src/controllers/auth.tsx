@@ -60,8 +60,7 @@ export const loginUser = async (c: any) => {
       id: user.id,
       username: user.username,
     },
-    // @ts-ignore:next-line
-    process.env.TokenSecret
+    process.env.TokenSecret as string
   );
 
   setCookie(c, "token", token, {

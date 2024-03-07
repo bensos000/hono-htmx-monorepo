@@ -16,8 +16,7 @@ app.use(
 app.use(
   "/auth/*",
   jwt({
-    // @ts-ignore:next-line
-    secret: process.env.TokenSecret,
+    secret: process.env.TokenSecret as string,
     cookie: "token",
   })
 );
