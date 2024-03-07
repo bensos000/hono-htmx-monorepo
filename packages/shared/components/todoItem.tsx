@@ -37,6 +37,8 @@ export default function TodoItem({
                   hx-target={`#todo-completed-${id}`}
                   hx-ext="json-enc"
                   hx-swap="outerHTML"
+                  className="border-gray-900 rounded-md"
+                  autoFocus
                   hx-trigger="keyup[keyCode==13]"
                 />
               )}
