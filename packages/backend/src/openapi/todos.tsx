@@ -1,5 +1,5 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
-import { addTodo, deleteTodo, getTodos, updateTodo } from "../controllers/todo";
+import { addTodo, deleteTodo, getTodos, getUserMenu, updateTodo } from "../controllers/todo";
 
 export const todosOpenApiRoute = new OpenAPIHono();
 
@@ -111,7 +111,24 @@ const todoDeleteRoute = createRoute({
   tags: ["delete todo"],
 });
 
+const userGetRoute = createRoute({
+  method: "get",
+  path: "/api/auth/user",
+  security: [
+    {
+      AuthorizationBearer: [],
+    },
+  ],
+  responses: {
+    200: {
+      description: "user response",
+    },
+  },
+  tags: ["get user"],
+});
+
 todosOpenApiRoute.openapi(todosGetRoute, getTodos);
 todosOpenApiRoute.openapi(todoPostRoute, addTodo);
 todosOpenApiRoute.openapi(todoPutRoute, updateTodo);
 todosOpenApiRoute.openapi(todoDeleteRoute, deleteTodo);
+todosOpenApiRoute.openapi(userGetRoute, getUserMenu);

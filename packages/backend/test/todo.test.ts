@@ -50,4 +50,12 @@ describe("todo test", () => {
     const res = await app.fetch(req);
     expect(res.status).toBe(200);
   });
+  it("should get a user", async () => {
+    const req = new Request(`http://localhost/api/auth/user`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const res = await app.fetch(req);
+    expect(res.status).toBe(200);
+  });
 });
