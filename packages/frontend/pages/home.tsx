@@ -11,7 +11,7 @@ export default function Home() {
           hx-trigger="load"
           hx-target="this"
           className="flex items-baseline justify-between"
-          hx-sync="closest #token-api:loadend"
+          //hx-sync="closest #token-api:loadend"
         ></div>
         <NewTodo />
         <TodoList />
