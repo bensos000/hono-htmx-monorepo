@@ -11,7 +11,6 @@ export default function TodoList() {
             id="todo-list"
             role="list"
             className="divide-y divide-gray-200 dark:divide-gray-700"
-            hx-sync="closest body:loadend"
           >
             <div className="flex items-center justify-center">
               <img
@@ -20,6 +19,11 @@ export default function TodoList() {
               />
             </div>
           </ul>
+          <div
+            hx-get={`${process.env.BaseUrl}/api/auth/user`}
+            hx-trigger="load"
+            hx-target="#header"
+          ></div>
         </div>
       </div>
     </div>

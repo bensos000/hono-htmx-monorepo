@@ -19,11 +19,6 @@ describe("Authentication test", () => {
     const res = await app.fetch(req);
     expect(res.status).toBe(200);
   });
-  it("should getToken of a user", async () => {
-    const req = new Request("http://localhost/api/token");
-    const res = await app.fetch(req);
-    expect(res.status).toBe(200);
-  });
   it("should logout user", async () => {
     const req = new Request("http://localhost/api/logout", {
       method: "POST",

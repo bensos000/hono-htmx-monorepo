@@ -10,14 +10,6 @@ const HtmxSetTokenCookie = (token: string) =>
     window.location.href = "${process.env.FrontendUrl}/todos";
   </script>`;
 
-const HtmxTokenCookieListener = () =>
-  html`
-    document.body.addEventListener("htmx:configRequest", (e) => { const cookie =
-    document.cookie; if (cookie === "" && window.location.pathname !== "/")
-    window.location.href = "/"; e.detail.headers["Authorization"] = "Bearer " +
-    cookie.split("=")[1]; });
-  `;
-
 const HtmxTokenDelete = () =>
   html` cookieStore.delete("token"); window.location.href = "/"; `;
 
@@ -77,16 +69,10 @@ export const logoutUser = (c: any) => {
   return c.html(HtmxTokenDelete());
 };
 
-export const getToken = (c: any) => {
-  return c.html(HtmxTokenCookieListener());
-};
-
 authRoute.post("/register", registerUser);
 
 authRoute.post("/login", loginUser);
 
 authRoute.post("/logout", logoutUser);
-
-authRoute.get("/token", getToken);
 
 export default authRoute;

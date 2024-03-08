@@ -6,13 +6,7 @@ export default function Home() {
   return (
     <Layout>
       <div className="mt-8 max-w-sm mx-auto">
-        <div
-          hx-get={`${process.env.BaseUrl}/api/auth/user`}
-          hx-trigger="load"
-          hx-target="this"
-          className="flex items-baseline justify-between"
-          //hx-sync="closest #token-api:loadend"
-        ></div>
+        <div id="header" className="flex items-baseline justify-between"></div>
         <NewTodo />
         <TodoList />
         <script id="logout"></script>

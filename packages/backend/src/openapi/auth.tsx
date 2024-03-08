@@ -1,5 +1,5 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
-import { getToken, loginUser, logoutUser, registerUser } from "../controllers/auth";
+import { loginUser, logoutUser, registerUser } from "../controllers/auth";
 
 export const authOpenApiRoute = new OpenAPIHono();
 
@@ -49,17 +49,6 @@ const authLoginRoute = createRoute({
   tags: ["auth login"],
 });
 
-const authTokenRoute = createRoute({
-  method: "get",
-  path: "/api/token",
-  responses: {
-    200: {
-      description: "token response",
-    },
-  },
-  tags: ["auth token"],
-});
-
 const authLogoutRoute = createRoute({
   method: "post",
   path: "/api/logout",
@@ -73,5 +62,4 @@ const authLogoutRoute = createRoute({
 
 authOpenApiRoute.openapi(authRegisterRoute, registerUser);
 authOpenApiRoute.openapi(authLoginRoute, loginUser);
-authOpenApiRoute.openapi(authTokenRoute, getToken);
 authOpenApiRoute.openapi(authLogoutRoute, logoutUser);
