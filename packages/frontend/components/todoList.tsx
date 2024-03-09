@@ -12,7 +12,7 @@ export default function TodoList() {
           ></div> */}
           <ul
             hx-get={`${process.env.BaseUrl}/api/auth/todos`}
-            hx-trigger="load, todo-delete from:body, tokenAcquired from:body"
+            hx-trigger="load, todo-delete from:body, tokenAcquired from:body once"
             hx-target="#todo-list"
             id="todo-list"
             role="list"
@@ -27,7 +27,7 @@ export default function TodoList() {
           </ul>
           <div
             hx-get={`${process.env.BaseUrl}/api/auth/user`}
-            hx-trigger="load, tokenAcquired from:body"
+            hx-trigger="load, tokenAcquired from:body once"
             hx-target="#header"
           ></div>
         </div>
