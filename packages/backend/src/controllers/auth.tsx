@@ -13,6 +13,14 @@ const HtmxSetTokenCookie = (token: string) =>
 const HtmxTokenDelete = () =>
   html` cookieStore.delete("token"); window.location.href = "/"; `;
 
+const HtmxTokenCookieListener = () =>
+  html`
+    document.body.addEventListener("htmx:configRequest", (e) => { const cookie =
+    document.cookie; if (cookie === "" && window.location.pathname !== "/")
+    window.location.href = "/"; e.detail.headers["Authorization"] = "Bearer " +
+    cookie.split("=")[1]; });
+  `;
+
 const authRoute = new Hono();
 
 let users = usersFromDb;
@@ -69,10 +77,16 @@ export const logoutUser = (c: any) => {
   return c.html(HtmxTokenDelete());
 };
 
+export const token = (c: any) => {
+  return c.html(HtmxTokenCookieListener());
+};
+
 authRoute.post("/register", registerUser);
 
 authRoute.post("/login", loginUser);
 
 authRoute.post("/logout", logoutUser);
+
+authRoute.get("/token", token);
 
 export default authRoute;

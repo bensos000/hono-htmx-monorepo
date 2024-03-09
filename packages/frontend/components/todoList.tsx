@@ -4,9 +4,15 @@ export default function TodoList() {
       <h1 className="text-white">My Todos</h1>
       <div className="mt-2 p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
         <div className="flow-root">
+          {/* <div
+            hx-get={`${process.env.BaseUrl}/api/token`}
+            hx-trigger="load"
+            hx-target="#token"
+            hx-swap="innerHtml"
+          ></div> */}
           <ul
             hx-get={`${process.env.BaseUrl}/api/auth/todos`}
-            hx-trigger="load, todo-delete from:body"
+            hx-trigger="load, todo-delete from:body, tokenAcquired from:body"
             hx-target="#todo-list"
             id="todo-list"
             role="list"
@@ -21,7 +27,7 @@ export default function TodoList() {
           </ul>
           <div
             hx-get={`${process.env.BaseUrl}/api/auth/user`}
-            hx-trigger="load"
+            hx-trigger="load, tokenAcquired from:body"
             hx-target="#header"
           ></div>
         </div>
