@@ -3,20 +3,62 @@ import {
   renderUserJoinNotification,
   renderUserMessage,
   renderUserLeaveNotification,
+  renderAuthorization,
 } from "./template";
-import { generateUsername, sanitizeInput, currentTime } from "./utils";
-
+import { sanitizeInput, currentTime } from "./utils";
+import { verify } from "backend";
 interface User {
+  id?: string;
   username: string;
+  password?: string;
+  roles?: string;
 }
 
-let users = new Map<string, User>();
+let connectedUsers = new Map<string, User>();
 
-const server = Bun.serve<{ username: string }>({
+const banIfNotAuthorized = async ({
+  authorization,
+  userId
+}: {
+  authorization: string;
+  userId: string;
+}) => {
+  try {
+    const payload = await verify(
+      authorization.replace("Bearer ", ""),
+      process.env.TokenSecret as string
+    );
+    if (userId === payload.id) return true;
+    else return undefined;
+  } catch (e) {
+    return undefined;
+  }
+};
+
+const getCurrentUser = async (ws: any) => {
+  const wsCurrentUser = (await (
+    await fetch(`${process.env.BackendUrl}/api/auth/ws-user`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${ws.data.token}`,
+      },
+    })
+  ).json()) as any;
+
+  return JSON.parse(wsCurrentUser.user)![0];
+};
+
+const server = Bun.serve<{ token: string }>({
   port: 3004,
   fetch(req, server) {
-    const username = generateUsername();
-    const success = server.upgrade(req, { data: { username } });
+    const { searchParams } = new URL(req.url);
+
+    const success = server.upgrade(req, {
+      // this object must conform to WebSocketData
+      data: {
+        token: searchParams.get("token"),
+      },
+    });
     if (success) {
       // Bun automatically returns a 101 Switching Protocols
       // if the upgrade succeeds
@@ -28,7 +70,17 @@ const server = Bun.serve<{ username: string }>({
   },
   websocket: {
     // this is called when a message is received
-    async message(ws, message) {
+    async message(ws, message: any) {
+      const user = await getCurrentUser(ws);
+      const userFound = await banIfNotAuthorized({
+        authorization: ws.data.token,
+        userId: user.id,
+      });
+
+      if (!userFound) {
+        ws.send(renderAuthorization());
+        return;
+      }
       try {
         const parsedMessage =
           typeof message === "string" ? JSON.parse(message) : message;
@@ -42,7 +94,7 @@ const server = Bun.serve<{ username: string }>({
         const sanitizedMessage = sanitizeInput(parsedMessage.message);
 
         const remoteMessage = renderUserMessage(
-          ws.data.username,
+          user.username as string,
           sanitizedMessage,
           formattedTime,
           false
@@ -61,12 +113,22 @@ const server = Bun.serve<{ username: string }>({
         console.error("Error in WebSocket message handler:", error);
       }
     },
-    open(ws) {
+    async open(ws) {
+      const user = await getCurrentUser(ws);
+      const userFound = await banIfNotAuthorized({
+        authorization: ws.data.token,
+        userId: user.id,
+      });
+
+      if (!userFound) {
+        ws.send(renderAuthorization());
+        return;
+      }
       try {
         ws.subscribe("chatroom");
-        const username = ws.data.username;
-        users.set(username, { username });
-        const userCount = renderOnlineUserCount(users.size);
+        const username = user.username as string;
+        connectedUsers.set(username, { username });
+        const userCount = renderOnlineUserCount(connectedUsers.size);
         const userJoinNotification = renderUserJoinNotification(
           sanitizeInput(username)
         );
@@ -77,12 +139,21 @@ const server = Bun.serve<{ username: string }>({
       }
       console.log("Connection opened");
     }, // a socket is opened
-    close(ws, code, message) {
+    async close(ws, code, message) {
+      const user = await getCurrentUser(ws);
+      const userFound = await banIfNotAuthorized({
+        authorization: ws.data.token,
+        userId: user.id,
+      });
+      if (!userFound) {
+        ws.send(renderAuthorization());
+        return;
+      }
       try {
-        users.delete(ws.data.username);
-        const userCount = renderOnlineUserCount(users.size);
+        connectedUsers.delete(user.username as string);
+        const userCount = renderOnlineUserCount(connectedUsers.size);
         const userLeaveNotification = renderUserLeaveNotification(
-          sanitizeInput(ws.data.username)
+          sanitizeInput(user.username as string)
         );
         server.publish("chatroom", userCount + userLeaveNotification);
         ws.unsubscribe("chatroom");

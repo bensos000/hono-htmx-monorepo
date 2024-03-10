@@ -39,3 +39,10 @@ export function renderUserLeaveNotification(username: string) {
           </div>
         </div>`;
 }
+
+export function renderAuthorization() {
+  return `
+        <div hx-swap-oob='afterbegin:#chat_messages'>
+          <h2 class="text-red">You're Unauthorized</h2>
+        </div>`;
+}

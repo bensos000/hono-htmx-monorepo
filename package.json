@@ -1,11 +1,12 @@
 {
   "name": "honohtmxmonorepo",
+  "type": "module",
   "scripts": {
-    "start:frontend": "cd packages/frontend && bun install && bun run start",
-    "start:backend": "cd packages/backend && bun install && bun run start:test && bun run start:api",
-    "start:doc": "cd packages/backend && bun install && bun run start:doc",
-    "start:ws": "cd packages/websocket && bun install && bun run start:ws",
-    "boot:app": "bun run concurrently \"bun:start:*\""
+    "start:frontend": "cd packages/frontend && rm -rf bun.lockb && bun install && bun run start",
+    "start:backend": "cd packages/backend && rm -rf bun.lockb && bun install && bun run start:test && bun run start:api",
+    "start:doc": "cd packages/backend && rm -rf bun.lockb && bun install && bun run start:doc",
+    "start:ws": "cd packages/websocket && rm -rf bun.lockb && bun install && bun run start:ws",
+    "boot:app": "cd packages/backend && rm -rf bun.lockb && bun install && rm -rf backend.db && bun run start:migration && bun run start:migrate && bun run start:seed && cd ../../ && bun run concurrently \"bun:start:*\""
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

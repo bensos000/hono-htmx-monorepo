@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1710076666069,
+      "tag": "0000_absent_sebastian_shaw",
+      "breakpoints": true
+    }
+  ]
+}

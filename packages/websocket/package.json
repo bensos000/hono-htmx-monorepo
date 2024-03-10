@@ -5,6 +5,9 @@
   "scripts": {
     "start:ws": "bun run --watch index.ts"
   },
+  "dependencies": {
+    "backend": "workspace:*"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },

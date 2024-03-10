@@ -2,7 +2,8 @@ import { Hono } from "hono";
 import { sign } from "hono/jwt";
 import { deleteCookie, setCookie } from "hono/cookie";
 import { html } from "hono/html";
-import { users as usersFromDb } from "../db";
+import { db } from "../db/db";
+import { users } from "../db/schema";
 
 const HtmxSetTokenCookie = (token: string) =>
   html` <script>
@@ -23,8 +24,6 @@ const HtmxTokenCookieListener = () =>
 
 const authRoute = new Hono();
 
-let users = usersFromDb;
-
 export const registerUser = async (c: any) => {
   const { username, password } = await c.req.json();
 
@@ -32,26 +31,27 @@ export const registerUser = async (c: any) => {
     return c.html(<h2>Username and password are required</h2>);
   }
 
-  if (users.find((user) => user.username === username)) {
+  if ((await db.select().from(users)).find((user) => user.username === username)) {
     return c.html(<h2>Username already exists</h2>);
   }
 
   const id = crypto.randomUUID();
-  const hashedPassword = await Bun.password.hash(password);
+  //const hashedPassword = await Bun.password.hash(password);
 
-  users.push({
+  await db.insert(users).values([{
     id,
     username,
-    password: hashedPassword,
-    roles: [],
-  });
+    password,
+    roles: JSON.stringify([]),
+  }]);
 
   return c.html(<h2>User registered successfully</h2>);
 };
 
 export const loginUser = async (c: any) => {
   const { username, password } = await c.req.json();
-  const user = users.find((user) => user.username === username);
+  
+  const user = (await db.select().from(users)).find((user) => user.username === username);
   if (!user || password !== user.password) {
     return c.html(<h2>User not found or wrong password</h2>);
   }

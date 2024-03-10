@@ -5,9 +5,9 @@ export default function Chat() {
       <div className="mt-2 p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
         <div className="flow-root">
           <div
+            id="chat_box"
             hx-ext="ws"
             hx-boost="true"
-            ws-connect={`${process.env.WSUrl}/chatroom`}
           >
             <div>
               <h2 className="mb-5">Chat room</h2>
