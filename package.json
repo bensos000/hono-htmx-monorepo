@@ -6,7 +6,7 @@
     "start:backend": "cd packages/backend && rm -rf bun.lockb && bun install && bun run start:test && bun run start:api",
     "start:doc": "cd packages/backend && rm -rf bun.lockb && bun install && bun run start:doc",
     "start:ws": "cd packages/chat && rm -rf bun.lockb && bun install && bun run start:ws",
-    "boot:app": "cd packages/backend && rm -rf bun.lockb && bun install && rm -rf backend.db && bun run start:migration && bun run start:migrate && bun run start:seed && cd ../../ && bun run concurrently \"bun:start:*\""
+    "boot:app": "cd packages/backend && rm -rf bun.lockb && bun install && bun run start:migration && bun run start:migrate && bun run start:seed && cd ../../ && bun run concurrently \"bun:start:*\""
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

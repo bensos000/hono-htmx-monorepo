@@ -9,7 +9,7 @@ import * as schema from "./schema";
       password: "test",
       roles: JSON.stringify([]),
     },
-  ]);
+  ]).onConflictDoNothing();;
   console.log(`Seeding complete.`, await db.select().from(schema.users));
 })();
 
