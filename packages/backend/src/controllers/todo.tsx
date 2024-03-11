@@ -58,9 +58,7 @@ export const updateTodo = async (c: any) => {
   if (!(await banIfNotAuthorized(c)))
     return c.json({ error: "Unauthorized" }, 401);
   const id = c.req.param("id");
-  const { content, editable, completed } = await c.req.json();
-  console.log(id, content, editable, completed);
-    
+  const { content, editable, completed } = await c.req.json();    
   let todo: ITodo | undefined = todos.find((todo) => todo.id === id);
   if (todo) {
     if (content) {
