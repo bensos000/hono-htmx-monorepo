@@ -22,6 +22,7 @@ export default function TodoItem({
                 type="checkbox"
                 name="completed"
                 checked={completed}
+                value={completed ? `true` : `false`}
                 hx-put={`${process.env.BaseUrl}/api/auth/todo/${id}`}
                 hx-target={`#todo-completed-${id}`}
                 hx-ext="json-enc"

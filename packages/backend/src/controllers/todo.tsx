@@ -59,6 +59,8 @@ export const updateTodo = async (c: any) => {
     return c.json({ error: "Unauthorized" }, 401);
   const id = c.req.param("id");
   const { content, editable, completed } = await c.req.json();
+  console.log(id, content, editable, completed);
+    
   let todo: ITodo | undefined = todos.find((todo) => todo.id === id);
   if (todo) {
     if (content) {
@@ -66,7 +68,8 @@ export const updateTodo = async (c: any) => {
       todo.editable = false;
     }
     if (Boolean(editable)) todo.editable = Boolean(editable);
-    if (Boolean(completed)) todo.completed = Boolean(completed);
+    if (Boolean(completed) === true) todo.completed = true;
+    else todo.completed = false;
     todos[Number(todo.id) - 1] = todo;
   }
   return c.html(
@@ -117,17 +120,7 @@ export const getUserMenu = async (c: any) => {
   );
 };
 
-todosRoute.get("/todos", getTodos);
-
-todosRoute.post("/todo", addTodo);
-
-todosRoute.put("/todo/:id", updateTodo);
-
-todosRoute.delete("/todo", deleteTodo);
-
-todosRoute.get("/user", getUserMenu);
-
-todosRoute.get("/ws-user", async (c: any) => {
+export const WsGetUser = async (c: any) => {
   const authorization = c.req.header()["authorization"];
   try {
     const user = await verify(
@@ -145,6 +138,18 @@ todosRoute.get("/ws-user", async (c: any) => {
   } catch (e) {
     return c.json({ error: "Invalid token" });
   }
-});
+};
+
+todosRoute.get("/todos", getTodos);
+
+todosRoute.post("/todo", addTodo);
+
+todosRoute.put("/todo/:id", updateTodo);
+
+todosRoute.delete("/todo", deleteTodo);
+
+todosRoute.get("/user", getUserMenu);
+
+todosRoute.get("/ws-user", WsGetUser);
 
 export default todosRoute;
