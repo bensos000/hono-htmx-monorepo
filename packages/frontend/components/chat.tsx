@@ -16,12 +16,13 @@ export default function Chat() {
               </p>
             </div>
             <div id="chat_messages" className="mb-5"></div>
-            <form id="chat_form" ws-send="true" hx-on:submit="this.reset()">
+            <form id="chat_form" hx-validate="true" ws-send="true" hx-on:submit="this.reset()">
               <div className="flex">
                 <input
                   type="text"
                   id="message"
                   name="message"
+                  required
                   placeholder="say something"
                   className="block p-2 mr-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
