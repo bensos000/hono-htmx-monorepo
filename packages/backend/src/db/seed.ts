@@ -9,7 +9,17 @@ import * as schema from "./schema";
       password: "test",
       roles: JSON.stringify([]),
     },
-  ]).onConflictDoNothing();;
+  ]).onConflictDoNothing();
+  await db.insert(schema.todos).values([
+    {
+      id: "1",
+      content: "test1",
+      timestamp: "12345678",
+      editable: false,
+      completed: false,
+      user: "1",
+    },
+  ]).onConflictDoNothing();
   console.log(`Seeding complete.`, await db.select().from(schema.users));
 })();
 

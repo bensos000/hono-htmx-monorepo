@@ -1,9 +1,10 @@
 export interface ITodo {
   id?: string;
-  content?: string;
-  timestamp?: string;
-  completed?: boolean;
-  editable?: boolean;
+  content?: string | null;
+  timestamp?: string | null;
+  completed?: boolean | null;
+  editable?: boolean | null;
+  user: string;
 }
 
 export interface IUsers {

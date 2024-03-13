@@ -1,88 +1,90 @@
-import { ITodo, TodoItem } from "shared";
+import { TodoItem } from "shared";
 import { Hono } from "hono";
-import { todos as todoDb } from "../db";
 import { verify } from "hono/jwt";
 import { db } from "../db/db";
-import { users } from "../db/schema";
+import { todos, users } from "../db/schema";
 import { eq } from "drizzle-orm";
 
 const todosRoute = new Hono();
 
-let todos = todoDb;
-
 export const banIfNotAuthorized = async (c: any) => {
   const authorization = c.req.header()["authorization"];
   try {
-    await verify(
+    const user = await verify(
       authorization.replace("Bearer ", ""),
       process.env.TokenSecret as string
     );
-    return true;
+    return user;
   } catch (e) {
     return false;
   }
 };
 
 export const getTodos = async (c: any) => {
-  if (!(await banIfNotAuthorized(c)))
-    return c.json({ error: "Unauthorized" }, 401);
+  const user = await banIfNotAuthorized(c);
+  if (!user) return c.json({ error: "Unauthorized" }, 401);
   return c.html(
     <>
-      {todos.map((todo) => (
-        <TodoItem {...todo}></TodoItem>
-      ))}
+      {(await db.select().from(todos).where(eq(todos.user, user.id))).map(
+        (todo) => (
+          <TodoItem {...todo}></TodoItem>
+        )
+      )}
     </>
   );
 };
 
 export const addTodo = async (c: any) => {
-  if (!(await banIfNotAuthorized(c)))
-    return c.json({ error: "Unauthorized" }, 401);
+  const user = await banIfNotAuthorized(c);
+  if (!user) return c.json({ error: "Unauthorized" }, 401);
   const { content } = await c.req.json();
-  const todo = {
-    id: `${Number(todos.length + 1)}`,
-    content,
-    timestamp: "12345566",
-    completed: false,
-    editable: false,
-  };
-  todos.push(todo);
+  const todo = [
+    {
+      id: crypto.randomUUID(),
+      content,
+      timestamp: "12345566",
+      completed: false,
+      editable: false,
+      user: user.id,
+    },
+  ];
+  await db.insert(todos).values(todo);
   return c.html(
     <>
-      <TodoItem {...todo}></TodoItem>
+      <TodoItem {...todo[0]}></TodoItem>
     </>
   );
 };
 
 export const updateTodo = async (c: any) => {
-  if (!(await banIfNotAuthorized(c)))
-    return c.json({ error: "Unauthorized" }, 401);
+  const user = await banIfNotAuthorized(c);
+  if (!user) return c.json({ error: "Unauthorized" }, 401);
   const id = c.req.param("id");
-  const { content, editable, completed } = await c.req.json();    
-  let todo: ITodo | undefined = todos.find((todo) => todo.id === id);
-  if (todo) {
+  const { content, editable, completed } = await c.req.json();
+  let todo = await db.select().from(todos).where(eq(todos.id, id));
+  if (todo.length > 0) {
     if (content) {
-      todo.content = content;
-      todo.editable = false;
+      todo[0].content = content;
+      todo[0].editable = false;
     }
-    if (Boolean(editable)) todo.editable = Boolean(editable);
-    if (Boolean(completed) === true) todo.completed = true;
-    else todo.completed = false;
-    todos[Number(todo.id) - 1] = todo;
+    if (Boolean(editable)) todo[0].editable = Boolean(editable);
+    if (Boolean(completed) === true) todo[0].completed = true;
+    else todo[0].completed = false;
+    await db.update(todos).set(todo[0]).where(eq(todos.id, id));
   }
   return c.html(
     <>
-      <TodoItem {...todo}></TodoItem>
+      <TodoItem {...todo[0]}></TodoItem>
     </>
   );
 };
 
 export const deleteTodo = async (c: any) => {
-  if (!(await banIfNotAuthorized(c)))
-    return c.json({ error: "Unauthorized" }, 401);
+  const user = await banIfNotAuthorized(c);
+  if (!user) return c.json({ error: "Unauthorized" }, 401);
   const { todoId } = await c.req.json();
 
-  todos = todos.filter((todo) => todo.id !== todoId);
+  await db.delete(todos).where(eq(todos.id, todoId));
   return c.body("✔", 200, {
     "HX-Trigger": "todo-delete",
   });
@@ -119,22 +121,16 @@ export const getUserMenu = async (c: any) => {
 };
 
 export const WsGetUser = async (c: any) => {
-  const authorization = c.req.header()["authorization"];
-  try {
-    const user = await verify(
-      authorization.replace("Bearer ", ""),
-      process.env.TokenSecret as string
-    );
-    if (user) {
-      const found = (await db.select().from(users).where(eq(users.username, user.username)));
-      if (found.length > 0) {
-       return c.json({ user: JSON.stringify(found) })
-      } else {
-        return c.json({ error: "No User Found" });
-      }
-    }
-  } catch (e) {
-    return c.json({ error: "Invalid token" });
+  const user = await banIfNotAuthorized(c);
+  if (!user) return c.json({ error: "Unauthorized" }, 401);
+  const found = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, user.id));
+  if (found.length > 0) {
+    return c.json({ user: JSON.stringify(found) });
+  } else {
+    return c.json({ error: "No User Found" });
   }
 };
 

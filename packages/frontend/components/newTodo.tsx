@@ -6,6 +6,7 @@ export default function NewTodo() {
       hx-target="#todo-list"
       hx-swap="beforeend"
       hx-ext="json-enc"
+      hx-on:submit="this.reset()"
     >
       <label
         htmlFor="content"
