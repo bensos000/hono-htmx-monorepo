@@ -82,8 +82,7 @@ export const updateTodo = async (c: any) => {
 export const deleteTodo = async (c: any) => {
   const user = await banIfNotAuthorized(c);
   if (!user) return c.json({ error: "Unauthorized" }, 401);
-  const { todoId } = await c.req.json();
-
+  const todoId = await c.req.query("todoId");
   await db.delete(todos).where(eq(todos.id, todoId));
   return c.body("✔", 200, {
     "HX-Trigger": "todo-delete",

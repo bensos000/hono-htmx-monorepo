@@ -2,7 +2,7 @@ export default function Layout({ children }: { children: JSX.Element }) {
   return (
     <html>
       <head>
-        <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+        <script src="https://unpkg.com/htmx.org@2.0.0-beta1/dist/htmx.min.js"></script>
         <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
         <script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script>
         <script src="https://cdn.tailwindcss.com"></script>
@@ -16,7 +16,6 @@ export default function Layout({ children }: { children: JSX.Element }) {
         id="token"
         dangerouslySetInnerHTML={{
           __html: `
-        
         const getCookieHeader = (e) => {
           const cookie = document.cookie; if (cookie === "" && window.location.pathname !== "/")
           window.location.href = "/"; e.detail.headers["Authorization"] = "Bearer " +
@@ -33,6 +32,7 @@ export default function Layout({ children }: { children: JSX.Element }) {
         document.body.addEventListener("htmx:wsBeforeMessage", (e) => { 
           wsSetCookies();
         });
+        htmx.config.selfRequestsOnly = false;
         `,
         }}
       ></script>
